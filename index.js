@@ -25,6 +25,7 @@ function addSingleLocation(zipCode) {
         .then(function(responses) {
             let data = responses[0].message;
             data.population = parseInt(responses[1][1][0]);
+            data.zipCode = zipCode;
             renderSingleLocation(data);
         });
 }
@@ -36,7 +37,7 @@ function renderSingleLocation(data) {
 
     // Add new location card
     $('#card-holder').prepend(`
-        <section class="item location-card">
+        <section class="item location-card" zip="${data.zipCode}">
             ${data.county_name} County <br>
             ${data.state_name} <br>
             Confirmed Cases: ${data.confirmed} <br>
@@ -54,12 +55,14 @@ function addZip(zipCode) {
     // Add the new zip code (if it isn't already in the list)
     if (zipSet.has(zipCode)) return;
     zipSet.add(zipCode);
-
-    // Update URL with latest list of zipcodes
-    window.history.pushState(null, null, `/?zip=${[...zipSet].join(',')}`);
+    updateURL();
 
     // Render new zipcode
     addSingleLocation(zipCode);
+}
+
+function updateURL() {
+    window.history.pushState(null, null, `/?zip=${[...zipSet].join(',')}`);
 }
 
 function initialize() {
@@ -87,8 +90,17 @@ function initialize() {
     });
 
     // Listen for user to remove location
-    // TODO: Doesn't work because element doesn't exist on load
     $('.remove-location').click(e => console.log(e));
+    $('#card-holder').on('click', '.remove-location', function(e) {
+        // Get the appropriate location card and its zip code
+        let locationCard = $(e.target).parent();
+        let zip = locationCard.attr('zip');
+
+        // Remove location card and remove zip from zipList
+        $(locationCard).remove();
+        zipSet.delete(zip);
+        updateURL();
+    });
 }
 
 $(initialize());
