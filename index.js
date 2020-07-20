@@ -62,6 +62,7 @@ function addZip(zipCode) {
 }
 
 function updateURL() {
+    console.log(window.location);
     window.history.pushState(null, null, `${window.location.pathname}?zip=${[...zipSet].join(',')}`);
 }
 
