@@ -1,0 +1,34 @@
+.location-card {
+    max-width: 300px;
+    padding: 10px;
+    background-color: green;
+    border-radius: 10px;
+    margin: 5px;
+}
+
+
+/* Groups & Items (Mobile First) */
+.wrapper {
+    width: 96%;
+    display: block;
+    margin: auto;
+}
+
+.group {
+    display: flex;
+    flex-direction: column;
+}
+
+.item {
+    flex: 1;
+}
+
+@media all and (min-width: 600px) {
+    .group {
+        flex-direction: row;
+    }
+
+    .item {
+        margin-bottom: 0;
+    }
+}
