@@ -62,7 +62,7 @@ function addZip(zipCode) {
 }
 
 function updateURL() {
-    window.history.pushState(null, null, `/?zip=${[...zipSet].join(',')}`);
+    window.history.pushState(null, null, `${window.location.pathname}?zip=${[...zipSet].join(',')}`);
 }
 
 function initialize() {
