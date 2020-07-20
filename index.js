@@ -17,31 +17,35 @@ function addSingleLocation(zipCode) {
         method: 'POST',
         body: JSON.stringify({zip_code: zipCode})
     };
-    
-    const fetch(ncovBase19URL, options)
-        .then(response => response.json())
-        .then(parsedResponse => renderSingleLocation(parsedResponse.message));
+    const promise1 = fetch(ncovBase19URL, options)
+        .then(response => response.json());
 
-    // TODO: Get Population data
+    // Fetch census data
     let fip = zip2fips[zipCode]; // This is a 5 digit code
-    console.log(fip);
-    fetch(`${censusBaseURL}?get=POP&for=county:${fip.slice(2)}&in=state:${fip.slice(0,2)}&key=${censusAPIKey}`)
-        .then(response => response.json())
-        .then(parsedResponse => console.log(parsedResponse));
+    const promise2 = fetch(`${censusBaseURL}?get=POP&for=county:${fip.slice(2)}&in=state:${fip.slice(0,2)}&key=${censusAPIKey}`)
+        .then(response => response.json());
+
+    Promise.all([promise1, promise2])
+        .then(function(responses) {
+            let data = responses[0].message;
+            data.population = parseInt(responses[1][1][0]);
+            renderSingleLocation(data);
+        });
 }
 
 function renderSingleLocation(data) {
-    console.log(data);
+    let percentPop = (data.confirmed/data.population*100).toFixed(1);
 
     $('#card-holder').prepend(`
         <section class="item location-card">
             ${data.county_name} County <br>
             ${data.state_name} <br>
             Confirmed Cases: ${data.confirmed} <br>
-            % of Population: _____ <br>
+            % of Population: ${percentPop}% <br>
             Fatality Rate: ${data.fatality_rate} <br>
             New Cases: ${data.new} <br>
             Last Update: ${data.last_update} <br>
+            <button class="remove-location">Remove</button>
         </section>
     `);
 }
