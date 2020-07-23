@@ -3,30 +3,56 @@ const ncovBase19URL = 'https://api.ncov19.us';
 const censusBaseURL = 'https://api.census.gov/data/2019/pep/population';
 const censusAPIKey = '3e74754aa5baddee8dfd6645aa7d3e3d5dbabc4a';
 
+// Global variables
 let zipSet = new Set(); // A list of unique zip codes
 var zip2fips = {}; // We will read this from a JSON file when we initialize the page
-var chartData = [{
-    label: 'National Average',
-    backgroundColor: 'rgb(255, 99, 132)',
-    borderColor: 'rgb(255, 99, 132)',
-    data: []
-}];
+var chart;
+var chartData = [];
+var chartColors = ['rgb(0, 99, 132)','rgb(100, 99, 132)','rgb(255, 99, 0)'];
 
-function renderChart() {
-    var ctx = document.getElementById('myChart').getContext('2d');
-    var chart = new Chart(ctx, {
-    // The type of chart we want to create
-    type: 'bar',
+async function initializeChart() {
+    // Load national averages for chart data
+    const covPromise = fetch(`${ncovBase19URL}/stats`)
+        .then(response => response.json());
 
-    // The data for our dataset
-    data: {
-        labels: ['% Population Infected', 'Fatality Rate', '% Case Growth'],
-        datasets: chartData
-    },
+    const censusPromise = fetch(`${censusBaseURL}?get=POP&for=us:*&key=${censusAPIKey}`)
+        .then(response => response.json());
 
-    // Configuration options go here
-    options: {}
-});
+    await Promise.all([covPromise, censusPromise])
+        .then(function(responses) {
+            let data = responses[0].message;
+            let population = parseInt(responses[1][1][0]);
+
+            let percentPop = (data.confirmed/population*100).toFixed(1);
+            let percentGrowth = (data.todays_confirmed/data.confirmed*100).toFixed(1);
+            let fatalityRate = (data.deaths/data.confirmed*100).toFixed(1);
+
+            chartData.push({
+                label: 'National Average',
+                backgroundColor: 'rgb(255, 99, 132)',
+                borderColor: 'rgb(255, 99, 132)',
+                data: [percentPop,percentGrowth,fatalityRate]
+            });
+            chart = new Chart(document.getElementById('myChart').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: ['% Population Infected', 'Fatality Rate', '% Case Growth'],
+                    datasets: chartData
+                },
+            
+                // TODO: Configuration options
+                options: {
+                    legend: {
+                        display: 'no'
+                    }
+                }
+            });
+        });
+}
+
+function updateChart() {
+    chart.data.datasets = chartData;
+    chart.update();
 }
 
 function addSingleLocation(zipCode) {
@@ -57,6 +83,7 @@ function renderSingleLocation(data) {
     // Calculate new fields
     let percentPop = (data.confirmed/data.population*100).toFixed(1);
     let percentGrowth = (data.new/data.confirmed*100).toFixed(1);
+    let fatalityRate = data.fatality_rate.replace('%','');
 
     // Add new location card
     $('#card-holder').prepend(`
@@ -65,13 +92,24 @@ function renderSingleLocation(data) {
             ${data.state_name} <br>
             Confirmed Cases: ${data.confirmed} <br>
             % of Population: ${percentPop}% <br>
-            Fatality Rate: ${data.fatality_rate} <br>
+            Fatality Rate: ${fatalityRate}% <br>
             New Cases: ${data.new} <br>
             % Case Growth: ${percentGrowth}% <br>
             Last Update: ${data.last_update} <br>
             <button class="remove-location">Remove</button>
         </section>
     `);
+
+    // Add data to chartData
+    chartData.push({
+            zip: data.zipCode,
+            label: `${data.county_name} County`,
+            backgroundColor: chartColors.pop(),
+            borderColor: 'rgb(0, 99, 132)',
+            data: [percentPop, fatalityRate, percentGrowth]
+    });
+
+    updateChart();
 }
 
 function addZip(zipCode) {
@@ -89,26 +127,8 @@ function updateURL() {
 }
 
 function initialize() {
-    // Load national averages for chart data
-    const promise1 = fetch(`${ncovBase19URL}/stats`)
-        .then(response => response.json());
-
-    const promise2 = fetch(`${censusBaseURL}?get=POP&for=us:*&key=${censusAPIKey}`)
-        .then(response => response.json());
-
-    Promise.all([promise1, promise2])
-        .then(function(responses) {
-            let data = responses[0].message;
-            let population = parseInt(responses[1][1][0]);
-
-            let percentPop = (data.confirmed/population*100).toFixed(1);
-            let percentGrowth = (data.todays_confirmed/data.confirmed*100).toFixed(1);
-            let fatalityRate = (data.deaths/data.confirmed*100).toFixed(1);
-
-            chartData[0].data = [percentPop, fatalityRate, percentGrowth];
-
-            renderChart();
-        });
+    // Initializes the chart with national average data
+    const promise1 = initializeChart();
 
     // Grab zipcodes from the URL, in case the user has bookmarked results
     const urlParams = new URLSearchParams(document.location.search);
@@ -117,13 +137,16 @@ function initialize() {
         zipString.split(',').forEach(zip => zipSet.add(zip));
     }
 
-    // Load zip2fips JSON (for looking up fip code for census API) & render locations from URL
-    fetch('zip2fips.json')
-    .then(response => response.json())
-    .then(function(json) {
-        zip2fips = json;
-        zipSet.forEach(zip => addSingleLocation(zip));
-    });
+    // Load zip2fips JSON (for looking up fip code for census API)
+    const promise2 = fetch('zip2fips.json')
+        .then(response => response.json());
+
+    // Wait until chart is initialized and zip2fips is loaded, then add locations from URL
+    Promise.all([promise1,promise2])
+        .then(function(responses) {
+            zip2fips = responses[1];
+            zipSet.forEach(zip => addSingleLocation(zip));
+        }) 
 
     // Listen for user to add another zip code
     $('#zip-form').submit(function(event) {
@@ -144,6 +167,11 @@ function initialize() {
         $(locationCard).remove();
         zipSet.delete(zip);
         updateURL();
+
+        // Remove data from chart
+        chartData = chartData.filter(item => item.zip !== zip);
+        updateChart();
+        // TODO: Deal with chart colors
     });
 }
 
