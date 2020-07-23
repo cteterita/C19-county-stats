@@ -4,7 +4,7 @@ This is a tool to compare covid-19 cases across US counties, searched by Zip cod
 
 To Do:
 - Validate user input (zip codes)
-- Add styling & charts for data
+- Add styling & charts for data (https://www.chartjs.org/, https://formidable.com/open-source/victory/docs/victory-chart/)
 
 Future Feature Ideas:
 - Search for locations using the Google Places API & autofill search box
