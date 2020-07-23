@@ -1,11 +1,8 @@
 .location-card {
-    max-width: 300px;
     padding: 10px;
-    background-color: green;
     border-radius: 10px;
     margin: 5px;
 }
-
 
 /* Groups & Items (Mobile First) */
 .wrapper {
@@ -24,6 +21,10 @@
 }
 
 @media all and (min-width: 600px) {
+    canvas {
+        max-width: 80%;
+    }
+    
     .group {
         flex-direction: row;
     }

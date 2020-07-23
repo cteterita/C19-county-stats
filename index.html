@@ -17,21 +17,26 @@
     <div class="wrapper">
         <header>
             <h1>Covid-19 County Comparison</h1>
+            <p>
+                Compare infection and fatality rates in two or more US counties.
+                If you must travel, do so safely!
+            </p>
         </header>
-        <main class="group" id="card-holder">
-            <section class="item location-card">
+        <main class="group">
+            <canvas class="item" id="mainChart"></canvas>
+            <section class="item location-list">
                 <form id="zip-form">
-                    Enter US zip code <br>
-                    <input type="text" id="zipcode">
+                    <input type="text" placeholder="zip code" id="zipcode"> <br>
                     <button type="submit">Search</button>
                 </form>
+                <section id="card-holder">
+                </section>
             </section>
         </main>
-        <canvas id="myChart"></canvas>
     </div>
     
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3"></script>
     <script src="index.js"></script>
 </body>
 </html>

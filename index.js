@@ -8,7 +8,7 @@ let zipSet = new Set(); // A list of unique zip codes
 var zip2fips = {}; // We will read this from a JSON file when we initialize the page
 var chart;
 var chartData = [];
-var chartColors = ['rgb(0, 99, 132)','rgb(100, 99, 132)','rgb(255, 99, 0)'];
+var chartColors = ['rgb(0, 99, 132)','rgb(100, 99, 132)','rgb(255, 99, 0)','rgb(255, 99, 132)'];
 
 async function initializeChart() {
     // Load national averages for chart data
@@ -27,13 +27,25 @@ async function initializeChart() {
             let percentGrowth = (data.todays_confirmed/data.confirmed*100).toFixed(1);
             let fatalityRate = (data.deaths/data.confirmed*100).toFixed(1);
 
+            let color = chartColors.pop();
+            
+            // Add location card
+            $('#card-holder').append(`
+            <section class="item location-card" zip="${data.zipCode}" style="background-color:${color}">
+                National Average <br>
+                Confirmed Cases: ${data.confirmed} <br>
+                New Cases: ${data.todays_confirmed} <br>
+            </section>
+`);
+
+            // Add to chart
             chartData.push({
                 label: 'National Average',
-                backgroundColor: 'rgb(255, 99, 132)',
-                borderColor: 'rgb(255, 99, 132)',
+                backgroundColor: color,
+                borderColor: color,
                 data: [percentPop,percentGrowth,fatalityRate]
             });
-            chart = new Chart(document.getElementById('myChart').getContext('2d'), {
+            chart = new Chart(document.getElementById('mainChart').getContext('2d'), {
                 type: 'bar',
                 data: {
                     labels: ['% Population Infected', 'Fatality Rate', '% Case Growth'],
@@ -84,18 +96,15 @@ function renderSingleLocation(data) {
     let percentPop = (data.confirmed/data.population*100).toFixed(1);
     let percentGrowth = (data.new/data.confirmed*100).toFixed(1);
     let fatalityRate = data.fatality_rate.replace('%','');
+    let color = chartColors.pop();
 
     // Add new location card
-    $('#card-holder').prepend(`
-        <section class="item location-card" zip="${data.zipCode}">
+    $('#card-holder').append(`
+        <section class="item location-card" zip="${data.zipCode}" style="background-color:${color}">
             ${data.county_name} County <br>
             ${data.state_name} <br>
             Confirmed Cases: ${data.confirmed} <br>
-            % of Population: ${percentPop}% <br>
-            Fatality Rate: ${fatalityRate}% <br>
             New Cases: ${data.new} <br>
-            % Case Growth: ${percentGrowth}% <br>
-            Last Update: ${data.last_update} <br>
             <button class="remove-location">Remove</button>
         </section>
     `);
@@ -104,8 +113,8 @@ function renderSingleLocation(data) {
     chartData.push({
             zip: data.zipCode,
             label: `${data.county_name} County`,
-            backgroundColor: chartColors.pop(),
-            borderColor: 'rgb(0, 99, 132)',
+            backgroundColor: color,
+            borderColor: color,
             data: [percentPop, fatalityRate, percentGrowth]
     });
 
