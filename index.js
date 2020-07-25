@@ -31,12 +31,12 @@ async function initializeChart() {
             
             // Add location card
             $('#card-holder').append(`
-            <section class="item location-card" zip="${data.zipCode}" style="background-color:${color}">
-                National Average <br>
-                Confirmed Cases: ${data.confirmed} <br>
-                New Cases: ${data.todays_confirmed} <br>
-            </section>
-`);
+                <section class="item location-card" zip="${data.zipCode}" style="background-color:${color}">
+                    National Average <br>
+                    Confirmed Cases: ${data.confirmed} <br>
+                    New Cases: ${data.todays_confirmed} <br>
+                </section>
+            `);
 
             // Add to chart
             chartData.push({
@@ -85,7 +85,11 @@ function addSingleLocation(zipCode, fip) {
             let data = responses[0].message;
 
             // Catch the few cases where a valid zip isn't in the c19 database (example: 98765)
-            if (!data) throw `${zipCode} not found in database`;
+            if (!data) {
+                zipSet.delete(zipCode);
+                updateURL();
+                throw `${zipCode} not found in database`;
+            }
             data.population = parseInt(responses[1][1][0]);
             data.zipCode = zipCode;
             renderSingleLocation(data);
