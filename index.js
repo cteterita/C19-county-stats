@@ -52,10 +52,9 @@ async function initializeChart() {
                     datasets: chartData
                 },
             
-                // TODO: Configuration options
                 options: {
                     legend: {
-                        display: 'no'
+                        display: false
                     }
                 }
             });
@@ -67,7 +66,7 @@ function updateChart() {
     chart.update();
 }
 
-function addSingleLocation(zipCode) {
+function addSingleLocation(zipCode, fip) {
     // Fetch ncov19 data
     const options = {
         method: 'POST',
@@ -77,7 +76,6 @@ function addSingleLocation(zipCode) {
         .then(response => response.json());
 
     // Fetch census data
-    let fip = zip2fips[zipCode]; // This is a 5 digit code
     const promise2 = fetch(`${censusBaseURL}?get=POP&for=county:${fip.slice(2)}&in=state:${fip.slice(0,2)}&key=${censusAPIKey}`)
         .then(response => response.json());
 
@@ -85,10 +83,14 @@ function addSingleLocation(zipCode) {
     Promise.all([promise1, promise2])
         .then(function(responses) {
             let data = responses[0].message;
+
+            // Catch the few cases where a valid zip isn't in the c19 database (example: 98765)
+            if (!data) throw `${zipCode} not found in database`;
             data.population = parseInt(responses[1][1][0]);
             data.zipCode = zipCode;
             renderSingleLocation(data);
-        });
+        })
+        .catch(e => showError(e));
 }
 
 function renderSingleLocation(data) {
@@ -122,13 +124,24 @@ function renderSingleLocation(data) {
 }
 
 function addZip(zipCode) {
-    // Add the new zip code (if it isn't already in the list)
-    if (zipSet.has(zipCode)) return;
+    // Validate the zip code
+    let fip = zip2fips[zipCode];
+    // Check that it's a valid zip by looking up its fip
+    if (!fip) throw `${zipCode} is not a valid 5-digit US zip code`;
+    // Check that we don't already have it in our list
+    if (zipSet.has(zipCode)) throw `${zipCode} is already displayed`;
+
+    // Add it to the list of zips
     zipSet.add(zipCode);
     updateURL();
 
     // Render new zipcode
-    addSingleLocation(zipCode);
+    addSingleLocation(zipCode, fip);
+}
+
+function showError(e) {
+    $('#error-message').text(e);
+    updateURL(); // Remove any erroneous zips the user may have put in the URL
 }
 
 function updateURL() {
@@ -142,9 +155,8 @@ function initialize() {
     // Grab zipcodes from the URL, in case the user has bookmarked results
     const urlParams = new URLSearchParams(document.location.search);
     let zipString = urlParams.get('zip');
-    if (zipString) {
-        zipString.split(',').forEach(zip => zipSet.add(zip));
-    }
+    let initZipSet = [];
+    if (zipString) zipString.split(',').forEach(zip => initZipSet.push(zip));
 
     // Load zip2fips JSON (for looking up fip code for census API)
     const promise2 = fetch('zip2fips.json')
@@ -154,15 +166,22 @@ function initialize() {
     Promise.all([promise1,promise2])
         .then(function(responses) {
             zip2fips = responses[1];
-            zipSet.forEach(zip => addSingleLocation(zip));
-        }) 
+            initZipSet.forEach(zip => addZip(zip));
+        })
+        .catch(e => showError(e));
 
     // Listen for user to add another zip code
     $('#zip-form').submit(function(event) {
         event.preventDefault();
-        // TODO: Validate input (check that it is a zip code)
-        addZip($('#zipcode').val());
+        $('#error-message').text('');
+        try {
+            addZip($('#zipcode').val());
+            $('#zipcode').val('');   
         $('#zipcode').val('');
+            $('#zipcode').val('');   
+        } catch(e) {
+            showError(e)
+        }     
     });
 
     // Listen for user to remove location
