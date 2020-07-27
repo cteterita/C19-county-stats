@@ -1,7 +1,24 @@
+/* Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Mulish&display=swap');
+body {
+    font-family: 'Mulish', sans-serif;
+}
+
+/* Colors (generated using coolors.co */
+:root {
+    --blue-sapphire: rgba(58, 100, 126, 1);
+    --pumpkin: rgba(254, 127, 45, 1);
+    --sunglow: rgba(252, 202, 70, 1);
+    --olivine: rgba(161, 193, 129, 1);
+    --polished-pine: rgba(97, 155, 138, 1);
+    --lilac-luster: rgba(186, 160, 166, 1);
+}
+
 .location-card {
     padding: 10px;
     border-radius: 10px;
     margin: 5px;
+    background-color: var(--blue-sapphire);
 }
 
 /* Groups & Items (Mobile First) */

@@ -8,7 +8,13 @@ let zipSet = new Set(); // A list of unique zip codes
 var zip2fips = {}; // We will read this from a JSON file when we initialize the page
 var chart;
 var chartData = [];
-var chartColors = ['rgb(0, 99, 132)','rgb(100, 99, 132)','rgb(255, 99, 0)','rgb(255, 99, 132)'];
+var chartColors = [
+    'rgb(186, 160, 166',
+    'rgb(97, 155, 138)',
+    'rgb(161, 193, 129)',
+    'rgb(252, 202, 70)',
+    'rgb(254, 127, 45)',
+];
 
 async function initializeChart() {
     // Load national averages for chart data
@@ -27,11 +33,11 @@ async function initializeChart() {
             let percentGrowth = (data.todays_confirmed/data.confirmed*100).toFixed(1);
             let fatalityRate = (data.deaths/data.confirmed*100).toFixed(1);
 
-            let color = chartColors.pop();
+            let color = 'rgb(58, 100, 126)';
             
             // Add location card
             $('#card-holder').append(`
-                <section class="item location-card" zip="${data.zipCode}" style="background-color:${color}">
+                <section class="item location-card">
                     National Average <br>
                     Confirmed Cases: ${data.confirmed} <br>
                     New Cases: ${data.todays_confirmed} <br>
