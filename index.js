@@ -38,9 +38,7 @@ async function initializeChart() {
             // Add location card
             $('#card-holder').append(`
                 <section class="item location-card">
-                    National Average <br>
-                    Confirmed Cases: ${data.confirmed} <br>
-                    New Cases: ${data.todays_confirmed} <br>
+                    National Average
                 </section>
             `);
 
@@ -113,11 +111,13 @@ function renderSingleLocation(data) {
     // Add new location card
     $('#card-holder').append(`
         <section class="item location-card" zip="${data.zipCode}" style="background-color:${color}">
-            ${data.county_name} County <br>
-            ${data.state_name} <br>
-            Confirmed Cases: ${data.confirmed} <br>
-            New Cases: ${data.new} <br>
-            <button class="remove-location">Remove</button>
+            <div class="county-label">
+                ${data.county_name} County</b> <br>
+                ${data.state_name}
+            </div>
+            <div class="remove-button-holder">
+                <button class="remove-location">X</button>
+            </div>
         </section>
     `);
 
@@ -145,12 +145,15 @@ function addZip(zipCode) {
     zipSet.add(zipCode);
     updateURL();
 
+    // TODO: Limit to 5
+
     // Render new zipcode
     addSingleLocation(zipCode, fip);
 }
 
 function showError(e) {
     $('#error-message').text(e);
+    $('#error-message').show();
     updateURL(); // Remove any erroneous zips the user may have put in the URL
 }
 
@@ -183,7 +186,7 @@ function initialize() {
     // Listen for user to add another zip code
     $('#zip-form').submit(function(event) {
         event.preventDefault();
-        $('#error-message').text('');
+        $('#error-message').hide();
         try {
             addZip($('#zipcode').val());
             $('#zipcode').val('');   
@@ -195,10 +198,9 @@ function initialize() {
     });
 
     // Listen for user to remove location
-    $('.remove-location').click(e => console.log(e));
     $('#card-holder').on('click', '.remove-location', function(e) {
         // Get the appropriate location card and its zip code
-        let locationCard = $(e.target).parent();
+        let locationCard = $(e.target).parent().parent();
         let zip = locationCard.attr('zip');
 
         // Remove location card and remove zip from zipList
@@ -207,9 +209,10 @@ function initialize() {
         updateURL();
 
         // Remove data from chart
-        chartData = chartData.filter(item => item.zip !== zip);
+        let removalIndex = chartData.findIndex(item => item.zip === zip);
+        let dataToRemove = chartData.splice(removalIndex, 1);
+        chartColors.push(dataToRemove[0].backgroundColor);
         updateChart();
-        // TODO: Deal with chart colors
     });
 }
 
