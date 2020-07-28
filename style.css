@@ -43,7 +43,7 @@ body {
     margin: 0px 5px; 
     border: 1px solid;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: space-between;
 }
 
@@ -72,14 +72,19 @@ main {
 
 @media all and (min-width: 800px) {
     #chart {
-        width: 75%;
+        width: 70%;
     }
 
     #legend {
         width: 200px;
     }
+
+    #form-holder {
+        flex-direction: column;
+    }
     
     main {
         flex-direction: row-reverse;
+        justify-content: flex-end;
     }
 }
