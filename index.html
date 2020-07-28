@@ -14,20 +14,18 @@
     <title>Covid-19 County Comparison</title>
 </head>
 <body>
-    <div class="wrapper">
-        <header>
-            <h1>Covid-19 County Comparison</h1>
-            <p>
-                Compare infection and fatality rates in two or more US counties.
-                If you must travel, do so safely!
-            </p>
-        </header>
-        <main>
+    <header>
+        <h1>Covid-19 County Comparison</h1>
+        <h4>Compare infection and fatality rates in two or more US counties.
+            If you must travel, do so safely!</h4>
+    </header>
+    <main>
+        <div id="chart-wrapper">
             <section id="chart">
                 <div id="inner-chart-holder"> <!-- Required for chart.js responsiveness -->
                     <canvas id="mainChart"></canvas>
                 </div>
-            </section> 
+            </section>
             <section id="legend">
                 <div id="form-holder">
                     <form id="zip-form">
@@ -39,8 +37,13 @@
                 <div id="card-holder">
                 </div>
             </section>
-        </main>
-    </div>
+
+        </div>        
+    </main>        
+    <footer>
+        Copyright 2020, <a href="https://cteterita.github.io/portfolio/" target="_blank">Claire Teter Lesh</a>
+    </footer>
+
     
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3"></script>
