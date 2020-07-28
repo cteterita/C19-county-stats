@@ -31,13 +31,10 @@ body {
 }
 
 #error-message {
-    padding: 10px;
-    border-radius: 10px;
-    margin: 5px;
-    background-color: transparent;
-    border: 1px solid red;
-    color: rgba(255, 255, 255, 0.5);
+    color: red;
     display: none;
+    margin: 4px;
+    font-size: 12px;
 }
 #form-holder {
     padding: 10px;
@@ -61,7 +58,7 @@ body {
     flex-direction: column;
 }
 
-.location-list {
+.legend {
     display: flex;
     flex-direction: column;
 }

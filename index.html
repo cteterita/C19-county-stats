@@ -24,14 +24,14 @@
         </header>
         <main class="group">
             <canvas class="item" id="mainChart"></canvas>
-            <section class="item location-list">
+            <section class="item legend">
                 <section class="item" id="form-holder">
                     <form id="zip-form" class="item">
-                        <input type="text" placeholder="zip code" id="zipcode">
+                        <input type="text" placeholder="zip code" id="zipcode" maxlength="5" size="8">
                         <button type="submit">&#x1F50D;</button>
                     </form>
+                    <span id="error-message" class="item"></span>
                 </section>
-                <span id="error-message" class="item"></span>
                 <section id="card-holder" class="item">
                 </section>
             </section>
