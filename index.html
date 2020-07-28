@@ -22,18 +22,22 @@
                 If you must travel, do so safely!
             </p>
         </header>
-        <main class="group">
-            <canvas class="item" id="mainChart"></canvas>
-            <section class="item legend">
-                <section class="item" id="form-holder">
-                    <form id="zip-form" class="item">
+        <main>
+            <section id="chart">
+                <div id="inner-chart-holder"> <!-- Required for chart.js responsiveness -->
+                    <canvas id="mainChart"></canvas>
+                </div>
+            </section> 
+            <section id="legend">
+                <div id="form-holder">
+                    <form id="zip-form">
                         <input type="text" placeholder="zip code" id="zipcode" maxlength="5" size="8">
                         <button type="submit">&#x1F50D;</button>
                     </form>
-                    <span id="error-message" class="item"></span>
-                </section>
-                <section id="card-holder" class="item">
-                </section>
+                    <span id="error-message"></span>
+                </div>
+                <div id="card-holder">
+                </div>
             </section>
         </main>
     </div>

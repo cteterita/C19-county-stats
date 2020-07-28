@@ -59,7 +59,9 @@ async function initializeChart() {
                 options: {
                     legend: {
                         display: false
-                    }
+                    },
+                    responsive: true,
+                    maintainAspectRatio: false
                 }
             });
         });
