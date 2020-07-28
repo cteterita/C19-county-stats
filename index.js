@@ -52,13 +52,33 @@ async function initializeChart() {
             chart = new Chart(document.getElementById('mainChart').getContext('2d'), {
                 type: 'bar',
                 data: {
-                    labels: ['% Population Infected', 'Fatality Rate', '% Case Growth'],
+                    labels: [
+                        'Infection Rate', 
+                        'Fatality Rate', 
+                        'Growth Rate'
+                    ],
                     datasets: chartData
                 },
             
                 options: {
                     legend: {
                         display: false
+                    },
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                callback: function(value, index, values) {
+                                    return `${value}%`;
+                                }
+                            }
+                        }]
+                    },
+                    tooltips: {
+                        callbacks: {
+                            label: function (tooltipItem, data) {
+                                return `${tooltipItem.yLabel}%`;
+                            }
+                        }
                     },
                     responsive: true,
                     maintainAspectRatio: false
@@ -139,7 +159,7 @@ function addZip(zipCode) {
     // Validate the zip code
     let fip = zip2fips[zipCode];
     // Check that it's a valid zip by looking up its fip
-    if (!fip) throw `${zipCode} is not a valid 5-digit US zip code`;
+    if (!fip) throw `${zipCode} is not a valid US zip code`;
     // Check that we don't already have it in our list
     if (zipSet.has(zipCode)) throw `${zipCode} is already displayed`;
 
