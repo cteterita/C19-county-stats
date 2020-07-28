@@ -1,8 +1,5 @@
 /* Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Mulish&display=swap');
-body {
-    font-family: 'Mulish', sans-serif;
-}
 
 /* Colors (generated using coolors.co */
 :root {
@@ -14,13 +11,34 @@ body {
     --lilac-luster: rgba(186, 160, 166, 1);
 }
 
+/* Basic Styling */
+body {
+    background-color: var(--blue-sapphire);
+    font-family: 'Mulish', sans-serif;
+}
+
+header, footer {
+    text-align: center;
+    padding: 5px;
+    margin-bottom: 5px;
+}
+
+main {
+    background-color: white;
+    padding: 10px;
+}
+
+/* Links */
+a:link { color: var(--pumpkin); }
+a:visited{ color: var(--sunglow); }
+a:hover { color: var(--olivine); }
+a:active { color: var(--lilac-luster); }
+
 .location-card {
     padding: 10px;
     border-radius: 10px;
     margin: 5px;
     background-color: var(--blue-sapphire);
-    display: flex;
-    justify-content: space-between;
 }
 
 .remove-location {
@@ -50,17 +68,13 @@ body {
 #inner-chart-holder {
     position: relative;
     height: 400px;
-    width: 100%;
 }
 
 /* Groups & Items (Mobile First) */
-.wrapper {
+#chart-wrapper {
     width: 96%;
     display: block;
     margin: auto;
-}
-
-main {
     display: flex;
     flex-direction: column;
 }
@@ -70,7 +84,17 @@ main {
     flex-direction: column;
 }
 
-@media all and (min-width: 800px) {
+.location-card {
+    display: flex;
+    justify-content: space-between;
+}
+
+@media all and (min-width: 800px) {   
+    #chart-wrapper {
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+    }
+    
     #chart {
         width: 70%;
     }
@@ -82,9 +106,5 @@ main {
     #form-holder {
         flex-direction: column;
     }
-    
-    main {
-        flex-direction: row-reverse;
-        justify-content: flex-end;
-    }
+
 }
