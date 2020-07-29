@@ -17,10 +17,16 @@ body {
     font-family: 'Mulish', sans-serif;
 }
 
-header, footer {
+header {
     text-align: center;
-    padding: 5px;
-    margin-bottom: 5px;
+}
+
+h1 {
+    margin: 10px;
+}
+
+h4 {
+    margin: 10px;
 }
 
 main {
@@ -28,7 +34,11 @@ main {
     padding: 10px;
 }
 
-/* Links */
+footer {
+    text-align: center;
+    padding: 10px;
+}
+
 a:link { color: var(--pumpkin); }
 a:visited{ color: var(--sunglow); }
 a:hover { color: var(--olivine); }
