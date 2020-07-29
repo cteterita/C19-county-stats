@@ -16,14 +16,18 @@
 <body>
     <header>
         <h1>Covid-19 County Comparison</h1>
-        <h4>Compare infection and fatality rates in two or more US counties.
-            If you must travel, do so safely!</h4>
+        <h4>If you must travel, do so safely! Search by zip code to compare critical
+            infection statistics for up to 5 US counties.
+        </h4>
     </header>
     <main>
-        <div id="chart-wrapper">
-            <section id="chart">
+        <section id="main-wrapper">
+            <section id="chart-holder">
                 <div id="inner-chart-holder"> <!-- Required for chart.js responsiveness -->
-                    <canvas id="mainChart"></canvas>
+                    <canvas id="mainChart">
+                        <!-- Fallback text for screenreaders-->
+                        <p> Chart comparing COVID-19 statistics </p>
+                    </canvas>
                 </div>
             </section>
             <section id="legend">
@@ -37,14 +41,20 @@
                 <div id="card-holder">
                 </div>
             </section>
-
-        </div>        
+        </section>   
+        <section id="stats-legend">
+            <ul>
+                <li>Infection Rate: all-time confirmed cases divided by population</li>
+                <li>Fatality Rate: deaths divided by all-time confirmed cases</li>
+                <li>Infection Rate: new cases divided by all-time confirmed cases
+                    (this figure may be 0 if the county has not yet reported new cases for the day)</li>
+            </ul>
+        </section>     
     </main>        
     <footer>
         Copyright 2020, <a href="https://cteterita.github.io/portfolio/" target="_blank">Claire Teter Lesh</a>
     </footer>
 
-    
     <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3"></script>
     <script src="index.js"></script>
