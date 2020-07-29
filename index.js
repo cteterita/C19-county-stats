@@ -194,7 +194,7 @@ function initialize() {
     const urlParams = new URLSearchParams(document.location.search);
     let zipString = urlParams.get('zip');
     let initZipSet = [];
-    if (zipString) zipString.split(',').forEach(zip => initZipSet.push(zip));
+    if (zipString) zipString.split(',').slice(0,5).forEach(zip => initZipSet.push(zip));
 
     // Load zip2fips JSON (for looking up fip code for census API)
     const promise2 = fetch('zip2fips.json')
