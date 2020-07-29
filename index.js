@@ -167,7 +167,10 @@ function addZip(zipCode) {
     zipSet.add(zipCode);
     updateURL();
 
-    // TODO: Limit to 5
+    // Limit to 5 zips at a time
+    if (zipSet.size >= 5) {
+        $('#zipcode').prop('disabled', true);
+    }
 
     // Render new zipcode
     addSingleLocation(zipCode, fip);
@@ -209,13 +212,14 @@ function initialize() {
     $('#zip-form').submit(function(event) {
         event.preventDefault();
         $('#error-message').hide();
+
+        let zip = $('#zipcode').val();
         try {
-            addZip($('#zipcode').val());
-            $('#zipcode').val('');   
-        $('#zipcode').val('');
-            $('#zipcode').val('');   
+            addZip(zip);
+            $('#zipcode').val(''); 
         } catch(e) {
-            showError(e)
+            zipSet.delete(zip);
+            showError(e);
         }     
     });
 
@@ -235,6 +239,11 @@ function initialize() {
         let dataToRemove = chartData.splice(removalIndex, 1);
         chartColors.push(dataToRemove[0].backgroundColor);
         updateChart();
+
+        // Re-enable search form
+        if (zipSet.size < 5) {
+            $('#zipcode').prop('disabled', false);
+        }
     });
 }
 
